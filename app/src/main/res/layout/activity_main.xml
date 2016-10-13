@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clipToPadding="true"
+    android:fitsSystemWindows="true">
+
+    <RadioGroup
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbWeixin"
+            style="@style/tab_style"
+            android:drawableTop="@drawable/tab_weixin"
+            android:text="微信" />
+
+        <RadioButton
+            android:id="@+id/rbContacts"
+            style="@style/tab_style"
+            android:drawableTop="@drawable/tab_contact_list"
+            android:text="通讯录" />
+
+        <RadioButton
+            android:id="@+id/rbSearch"
+            style="@style/tab_style"
+            android:drawableTop="@drawable/tab_find"
+            android:text="发现" />
+
+        <RadioButton
+            android:id="@+id/rbProfile"
+            style="@style/tab_style"
+            android:drawableTop="@drawable/tab_profile"
+            android:text="我" />
+    </RadioGroup>
+
+    <View
+        android:id="@+id/view_temp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/tabs"
+        android:background="#d6d6d6" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/fragment_vp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/view_temp" />
+</RelativeLayout>

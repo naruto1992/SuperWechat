@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/main_activity_search"
+        android:title="查找"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_add"
+        android:icon="@drawable/main_activity_add"
+        android:title="添加"
+        app:showAsAction="always" />
+</menu>
