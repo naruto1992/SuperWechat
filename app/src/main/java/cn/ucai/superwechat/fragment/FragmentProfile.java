@@ -76,7 +76,7 @@ public class FragmentProfile extends Fragment {
                     .listener(parent)
                     .showImage(mContext);
             //保存头像的本地路径
-            Log.i("main",avatarPath);
+            Log.i("main", "" + avatarPath);
             SWApplication.saveAvatarPath(avatarPath);
         } else {
             Log.i("main", "avatarPath is not null");

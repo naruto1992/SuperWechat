@@ -270,7 +270,6 @@ public class FragmentContacts extends Fragment implements ContactsClickListener 
                     .addParam(I.KEY_REQUEST, I.REQUEST_DOWNLOAD_AVATAR)
                     .addParam(I.NAME_OR_HXID, user.getMUserName())
                     .addParam(I.AVATAR_TYPE, "user_avatar")
-                    //.saveFileName(user.getMUserNick()+".jpg")
                     .width(80)
                     .height(80)
                     .defaultPicture(R.drawable.default_face)
