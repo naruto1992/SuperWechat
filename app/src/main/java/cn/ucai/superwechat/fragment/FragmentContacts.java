@@ -24,7 +24,7 @@ import java.util.Map;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.bean.Result;
 import cn.ucai.superwechat.bean.UserAvatar;
-import cn.ucai.superwechat.utils.I;
+import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.utils.ImageLoader;
 import cn.ucai.superwechat.utils.OkHttpUtils;
 import cn.ucai.superwechat.utils.ToastUtil;

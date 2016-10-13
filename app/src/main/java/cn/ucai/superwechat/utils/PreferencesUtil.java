@@ -2,7 +2,8 @@ package cn.ucai.superwechat.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+
+import cn.ucai.superwechat.I;
 
 /**
  * Created by Shinelon on 2016/10/13.

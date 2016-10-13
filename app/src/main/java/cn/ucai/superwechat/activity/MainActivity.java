@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ViewUtils.inject(MainActivity.this);
-        if (true) { //!SWApplication.hasLogined()
+        if (!SWApplication.hasLogined()) { //!SWApplication.hasLogined()
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();

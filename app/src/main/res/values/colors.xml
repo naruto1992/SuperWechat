@@ -7,4 +7,5 @@
     <color name="actionBarDark">#22292c</color>
     <color name="white">#FFFFFF</color>
     <color name="full_transparent">#00000000</color>
+    <color name="main_bg">#EBEBEB</color>
 </resources>

@@ -1,4 +1,4 @@
-package cn.ucai.superwechat.utils;
+package cn.ucai.superwechat;
 
 public interface I {
     String IS_LOGINED = "isLogined";

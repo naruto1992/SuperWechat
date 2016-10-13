@@ -24,22 +24,32 @@ import okhttp3.Response;
  */
 public class ImageLoader {
     private static final String UTF_8 = "utf-8";
-    private static final int DOWNLOAD_SUCCESS=0;
-    private static final int DOWNLOAD_ERROR=1;
+    private static final int DOWNLOAD_SUCCESS = 0;
+    private static final int DOWNLOAD_ERROR = 1;
 
     private static OkHttpClient mOkHttpClient;
-    /** mHandler不能单例，否则一个mHandler不能准确地处理多个mBean*/
+    /**
+     * mHandler不能单例，否则一个mHandler不能准确地处理多个mBean
+     */
     private Handler mHandler;
-    private static LruCache<String,Bitmap> mCaches;
+    private static LruCache<String, Bitmap> mCaches;
     ImageBean mBean;
+    String pathName;  //下载的图片的文件路径名
 
-    /** RecyclerView、listView、GridView等容器*/
+    /**
+     * RecyclerView、listView、GridView等容器
+     */
     ViewGroup mParentLayout;
     private static String mTag;
-    /** *缺省图片*/
+    /**
+     * 缺省图片
+     */
     private int mDefaultPicId;
-    /**ListView、RecyclerView是否在拖拽中，true：拖拽中*/
+    /**
+     * ListView、RecyclerView是否在拖拽中，true：拖拽中
+     */
     boolean mIsDragging;
+
     public interface OnImageLoadListener {
         void onSuccess(String url, Bitmap bitmap);
 
@@ -59,6 +69,7 @@ public class ImageLoader {
 
     /**
      * 创建ImageLoader对象
+     *
      * @return
      */
     public static ImageLoader build() {
@@ -66,13 +77,13 @@ public class ImageLoader {
     }
 
     private ImageLoader() {
-        mBean=new ImageBean();
-        mIsDragging=true;
+        mBean = new ImageBean();
+        mIsDragging = true;
         initHandler();
         if (mOkHttpClient == null) {
             synchronized (ImageLoader.class) {
                 if (mOkHttpClient == null) {
-                    mOkHttpClient=new OkHttpClient();
+                    mOkHttpClient = new OkHttpClient();
                 }
             }
         }
@@ -83,26 +94,26 @@ public class ImageLoader {
 
     private void initCaches() {
         long maxMemory = Runtime.getRuntime().maxMemory();
-        mCaches = new LruCache<String, Bitmap>((int) maxMemory/4){
+        mCaches = new LruCache<String, Bitmap>((int) maxMemory / 4) {
             @Override
             protected int sizeOf(String key, Bitmap value) {
-                return value.getRowBytes()*value.getHeight();
+                return value.getRowBytes() * value.getHeight();
             }
         };
 
     }
 
     private void initHandler() {
-        mHandler = new Handler(){
+        mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                ImageBean bean= (ImageBean) msg.obj;
+                ImageBean bean = (ImageBean) msg.obj;
                 switch (msg.what) {
                     case DOWNLOAD_ERROR:
                         bean.listener.onError(bean.error);
                         break;
                     case DOWNLOAD_SUCCESS:
-                        bean.listener.onSuccess(mBean.url,mBean.bitmap);
+                        bean.listener.onSuccess(mBean.url, mBean.bitmap);
                         break;
                 }
             }
@@ -111,46 +122,50 @@ public class ImageLoader {
 
     /**
      * 获取服务端根地址并返回ImageLoader对象
+     *
      * @param url
      * @return
      */
     public ImageLoader url(String url) {
-        mBean.url=url;
+        mBean.url = url;
         return this;
     }
 
     /**
      * 设置图片的预期宽度并返回ImageLoader对象
+     *
      * @param width
      * @return
      */
     public ImageLoader width(int width) {
-        mBean.width=width;
+        mBean.width = width;
         return this;
     }
 
     /**
      * 设置图片的预期高度并返回ImageLoader对象
+     *
      * @param height
      * @return
      */
     public ImageLoader height(int height) {
-        mBean.height=height;
+        mBean.height = height;
         return this;
     }
 
     /**
      * 设置图片保存至sd卡的文件名
+     *
      * @param saveFileName
      * @return
      */
     public ImageLoader saveFileName(String saveFileName) {
-        mBean.saveFileName=saveFileName;
+        mBean.saveFileName = saveFileName;
         return this;
     }
 
     public ImageLoader listener(OnImageLoadListener listener) {
-        mBean.listener=listener;
+        mBean.listener = listener;
         return this;
     }
 
@@ -170,17 +185,17 @@ public class ImageLoader {
     public Bitmap loadImage(final Context context) {
         if (mBean.url == null) {
             Message msg = Message.obtain();
-            msg.what=DOWNLOAD_ERROR;
+            msg.what = DOWNLOAD_ERROR;
             mBean.error = "url没有设置";
-            msg.obj=mBean;
+            msg.obj = mBean;
             mHandler.sendMessage(msg);
             return null;
         }
         if (mCaches.get(mBean.url) != null) {
             return mCaches.get(mBean.url);
         }
-        String dir = FileUtils.getDir(context, mBean.saveFileName);
-        final Bitmap bitmap = BitmapUtils.getBitmap(dir);
+        this.pathName = FileUtils.getDir(context, mBean.saveFileName);
+        final Bitmap bitmap = BitmapUtils.getBitmap(pathName);
         if (bitmap != null) {
             return bitmap;
         }
@@ -188,16 +203,16 @@ public class ImageLoader {
             return null;
         }
         //用图片的下载地址（不包含每个图片的文件名)设置用于取消请求的tag
-        mTag=mBean.url;
+        mTag = mBean.url;
         Request request = new Request.Builder().url(mBean.url).tag(mTag).build();
         Call call = mOkHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Message msg = Message.obtain();
-                msg.what=DOWNLOAD_ERROR;
+                msg.what = DOWNLOAD_ERROR;
                 mBean.error = e.getMessage();
-                msg.obj=mBean;
+                msg.obj = mBean;
                 mHandler.sendMessage(msg);
             }
 
@@ -212,13 +227,13 @@ public class ImageLoader {
                     }
 
                     Message msg = Message.obtain();
-                    msg.what=DOWNLOAD_SUCCESS;
-                    msg.obj=mBean;
+                    msg.what = DOWNLOAD_SUCCESS;
+                    msg.obj = mBean;
                     mHandler.sendMessage(msg);
-                }else {// 发送下载失败的消息
+                } else {// 发送下载失败的消息
                     Message message = Message.obtain();
                     message.what = DOWNLOAD_ERROR;
-                    mBean.error="图片下载失败";
+                    mBean.error = "图片下载失败";
                     message.obj = mBean;
                     mHandler.sendMessage(message);
                 }
@@ -229,6 +244,7 @@ public class ImageLoader {
 
     /**
      * 则设置图片下载后主线程默认的图片显示代码->mOnImageLoadListener
+     *
      * @param parent:View，例如:RecyclerView、ListView等
      * @return
      */
@@ -256,23 +272,25 @@ public class ImageLoader {
     }
 
     /**
-     *  设置显示图片的ImageView
+     * 设置显示图片的ImageView
+     *
      * @param imageView
      * @return
      */
     public ImageLoader imageView(ImageView imageView) {
         imageView.setTag(mBean.url);
-        mBean.imageView=imageView;
+        mBean.imageView = imageView;
         return this;
     }
 
     /**
      * 设置缺省显示的图片
+     *
      * @param defaultPicId
      * @return
      */
     public ImageLoader defaultPicture(int defaultPicId) {
-        mDefaultPicId=defaultPicId;
+        mDefaultPicId = defaultPicId;
         return this;
     }
 
@@ -280,20 +298,22 @@ public class ImageLoader {
      * 设置在拖拽中是否显示图片，默认：true(一直显示图片)
      * true：不拖拽(显示图片)
      * false：拖拽中(不显示图片)
+     *
      * @param isDragging
      * @return
      */
     public ImageLoader setDragging(boolean isDragging) {
-        mIsDragging=isDragging;
+        mIsDragging = isDragging;
         return this;
     }
 
     /**
      * 封装了图片下载和显示的缺省代码。
      * 若要编写更为灵活的显示图片的代码，可调用loadImage方法
+     *
      * @param context
      */
-    public void showImage(Context context) {
+    public String showImage(Context context) {
         Bitmap bitmap = loadImage(context);//从内存或sd卡加载图片
         if (bitmap == null) {
             mBean.imageView.setImageResource(mDefaultPicId);
@@ -301,6 +321,7 @@ public class ImageLoader {
             mBean.imageView.setImageBitmap(bitmap);
             mBean.imageView.setTag(null);
         }
+        return this.pathName;  //获取图片的本地路径名
     }
 
     /**
@@ -308,8 +329,8 @@ public class ImageLoader {
      */
     public static void release() {
         if (mOkHttpClient != null) {
-            mOkHttpClient=null;
-            mCaches=null;
+            mOkHttpClient = null;
+            mCaches = null;
         }
     }
 }
