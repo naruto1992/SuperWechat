@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.utils.ImageLoader;
 import cn.ucai.superwechat.utils.OkHttpUtils;
 import cn.ucai.superwechat.utils.ToastUtil;
+import cn.ucai.superwechat.view.Divider;
 
 /**
  * Created by Administrator on 2016/10/10.
@@ -51,7 +53,7 @@ public class FragmentContacts extends Fragment implements ContactsClickListener 
 
     ContactAdapter mAdapter;
     ArrayList<UserAvatar> mContactList;
-    LinearLayoutManager mLayoutManager;
+    GridLayoutManager mLayoutManager;
 
     int mScrollState; //当前滑动的状态
 
@@ -76,8 +78,16 @@ public class FragmentContacts extends Fragment implements ContactsClickListener 
         mAdapter = new ContactAdapter(mContext, mContactList);
         mAdapter.setClickListener(this);
         mRvContact.setAdapter(mAdapter);
-        mLayoutManager = new LinearLayoutManager(mContext);
+
+        mLayoutManager = new GridLayoutManager(mContext, 1);
+        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return 1;
+            }
+        });
         mRvContact.setLayoutManager(mLayoutManager);
+        mRvContact.addItemDecoration(new Divider(R.color.line, 1));
     }
 
     private void setListener() {
